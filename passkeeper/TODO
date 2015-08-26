@@ -1,0 +1,27 @@
+
+
+Write document about that.
+Write unittest
+Write functionnal tests
+Implement : 
+  * encrypt
+  * Decrypt
+  * Ensure flush history still good
+  * Ensure search don't try to load this files
+
+Blueprint :
+Was able to create directory like mydata.raw
+This directory can contain subdir with file in it.
+When encrypt is colled each file will be encrypt with gpg.
+And we keep this subdir in encripted dir.
+
+To handle remove :
+walk in raw directory.
+If file need to be deleted :
+  * shred the file
+  * git force remove the file
+It will remove also the directory if empty.
+
+When call decrypt the directory and subdirector need to be recreated.
+os.mkdirs ?
+

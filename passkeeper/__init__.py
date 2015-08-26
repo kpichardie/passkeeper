@@ -71,6 +71,10 @@ comments = foo is good website
                         passphrase=passphrase)
                 LOG.info(encrypted.status)
                 self.git.add([git_relative_file_path])
+            # Handle .raw directory
+            if (fname.endswith('.raw')
+            and os.path.isdir(file_path)):
+                pass
         self.git.commit('%s' % commit_message)
         return True
 
