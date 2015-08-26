@@ -3,6 +3,7 @@
 
 import re
 from os.path import join as join_os
+from os.path import dirname
 import logging
 from passkeeper.tools import *
 from passkeeper.git import *
@@ -25,7 +26,7 @@ class Passkeeper(object):
         create_dir(self.directory)
 
         self.git.init()
-        self.git.add_gitignore(['*.ini'])
+        self.git.add_gitignore(['*.ini', '/*.raw'])
 
         # Write default template file
         sample_file = ("""[foo]
@@ -55,30 +56,54 @@ comments = foo is good website
 
         create_dir(join_os(self.directory, self.encrypted_dir))
 
-        # Encrypt files
         LOG.info('Encrypt files :')
+        # Encrypt files
         for fname in os.listdir(self.directory):
             file_path = os_join(self.directory, fname)
+            # Handle ini file
             if (fname.endswith('.ini')
             and os.path.isfile(file_path)):
                 LOG.info('Encrypt file %s' % fname)
-                git_relative_file_path = join_os(self.encrypted_dir,
+                git_relative_encrypted_file_path = join_os(self.encrypted_dir,
                                                  '%s.passkeeper' % fname)
                 encrypted_file_path = join_os(self.directory,
-                                              git_relative_file_path)
+                                              git_relative_encrypted_file_path)
                 encrypted = encrypt(source=file_path,
                         output=encrypted_file_path,
                         passphrase=passphrase)
                 LOG.info(encrypted.status)
-                self.git.add([git_relative_file_path])
+                self.git.add([git_relative_encrypted_file_path])
             # Handle .raw directory
             if (fname.endswith('.raw')
             and os.path.isdir(file_path)):
-                pass
+                for root, dirs, files in os.walk(file_path, topdown=False):
+                    for name in files:
+                        # /git/foo.raw/file
+                        root_raw_file_path = os.path.join(root, name)
+                        # foo.raw/file
+                        git_relative_file_path = re.sub('^%s' % self.directory, '',
+                                                   root_raw_file_path).lstrip('/')
+                        LOG.info('Encrypt file %s' % git_relative_file_path)
+
+                        # encrypt/foo.raw/file.passkeeper
+                        git_encrypted_relative_file_path = join_os(self.encrypted_dir,
+                                                         '%s.passkeeper' % git_relative_file_path)
+                        # /git/encrypt/foo.raw/file.passkeeper
+                        root_encrypted_file_path = join_os(self.directory,
+                                                      git_encrypted_relative_file_path)
+
+                        # /git/encrypt/foo.raw
+                        root_encrypted_dirname_path = dirname(root_encrypted_file_path)
+
+                        create_dir(root_encrypted_dirname_path)
+                        encrypted = encrypt(source=root_raw_file_path,
+                                output=root_encrypted_file_path,
+                                passphrase=passphrase)
+                        LOG.info(encrypted.status)
+                        self.git.add([git_encrypted_relative_file_path])
+
         self.git.commit('%s' % commit_message)
         return True
-
-
 
     def _remove_old_encrypted_files(self):
         "remove old passkeeper files"

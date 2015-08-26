@@ -25,3 +25,8 @@ It will remove also the directory if empty.
 When call decrypt the directory and subdirector need to be recreated.
 os.mkdirs ?
 
+
+
+BUG:
+cleanup deleted file s'en fou de l'extension. il essaye de faire ça sur les dossiers
+
