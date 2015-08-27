@@ -4,7 +4,7 @@ Write document about that.
 Write unittest
 Write functionnal tests
 Implement : 
-  * encrypt
+  DONE * encrypt
   * Decrypt
   * Ensure flush history still good
   * Ensure search don't try to load this files
@@ -28,5 +28,5 @@ os.mkdirs ?
 
 
 BUG:
-cleanup deleted file s'en fou de l'extension. il essaye de faire ça sur les dossiers
-
+Implement that with a walk _remove_old_encrypted_files
+Idem pour decrypt
