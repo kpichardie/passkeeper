@@ -38,12 +38,14 @@ class PasskeeperTestCase(test_base.TestCase):
             file_handle = file_mock()
             self.pk.init_dir()
 
-        mock_create_dir.assert_called_once_with('foo')
-
-        calls = [call().init(), call().add_gitignore(['*.ini'])]
+        calls = [call().init(), call().add_gitignore(['*.ini', '/*.raw'])]
         self.mock_git.assert_has_calls(calls)
 
+        calls = [call().create_dir(['foo', 'foo/default.raw'])]
+        self.mock_create_dir.assert_has_calls(calls)
+
         file_mock.assert_called_with('foo/default.ini', 'w')
+        file_mock.assert_called_with('foo/default.raw/ssh_id.rsa', 'w')
         self.assertEquals(True, file_handle.write.called)
 
         mock_encrypt.assert_called_once_with()

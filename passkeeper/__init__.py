@@ -44,6 +44,15 @@ comments = foo is good website
         with open(join_os(self.directory, 'default.ini'), 'w') as f:
             f.write(sample_file)
 
+	# Write default raw
+        create_dir(join_os(self.directory, './default.raw'))
+        sample_raw = ("""-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCA
+-----END RSA PRIVATE KEY-----""")
+        LOG.debug('Write sample file default raw')
+        with open(join_os(self.directory, './default.raw/', 'ssh_id.rsa'), 'w') as f:
+            f.write(sample_raw)
+
         self.encrypt()
         self.cleanup_ini()
 
