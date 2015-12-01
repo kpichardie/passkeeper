@@ -131,9 +131,10 @@ MIIEpAIBAAKCA
         return True
 
 
-    def decrypt(self):
-        passphrase = getpass()
-
+    def decrypt(self, passphrase=None):
+        if passphrase is None:  
+           passphrase = getpass()
+        
         LOG.info('Decrypt files :')
         source_dir = os_join(self.directory, self.encrypted_dir)
 
