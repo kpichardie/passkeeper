@@ -72,13 +72,14 @@ MIIEpAIBAAKCA
         self.cleanup_ini()
 
 
-    def encrypt(self, commit_message='Update encrypted files'):
+    def encrypt(self, commit_message='Update encrypted files', passphrase=None):
         LOG.info('Encryption')
-        passphrase = getpass()
-        passphrase_confirm = getpass('Confirm: ')
-        if passphrase != passphrase_confirm:
-            LOG.critical('Password and confirm are different')
-            return False
+        if passphase is None: 
+          passphrase = getpass()
+          passphrase_confirm = getpass('Confirm: ')
+          if passphrase != passphrase_confirm:
+              LOG.critical('Password and confirm are different')
+              return False
 
         create_dir(join_os(self.directory, self.encrypted_dir))
 
